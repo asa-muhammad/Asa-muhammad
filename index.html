@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asa Muhammad Portfolio</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- faux scanline / crt vignette overlay -->
+<div class="crt-overlay" aria-hidden="true"></div>
+
+<!-- pixel dissolve transition canvas -->
+<canvas id="dissolve-canvas" aria-hidden="true"></canvas>
+
+<!-- skater mode lens filter definition (no visual output on its own) -->
+<svg class="filter-defs" aria-hidden="true">
+  <filter id="skater-fisheye" x="0" y="0" width="100%" height="100%"
+          filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox">
+    <feImage xlink:href="dispmap.png" x="0" y="0" width="1" height="1"
+             result="map" preserveAspectRatio="none"/>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="0.22"
+                        xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div id="page-wrap">
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="#/" class="logo" data-link>
+        <span class="logo-mark">Asa Muhammad</span>
+        <span class="logo-sub">portfolio in progress</span>
+      </a>
+    </div>
+  </header>
+
+  <nav class="site-nav" aria-label="Primary">
+    <div class="site-nav-inner">
+      <a href="#/about" data-link data-page="about">about</a><span class="sep">|</span>
+      <a href="#/writing" data-link data-page="writing">writing</a><span class="sep">|</span>
+      <a href="#/jobs" data-link data-page="jobs">jobs</a><span class="sep">|</span>
+      <a href="#/misc" data-link data-page="misc">miscellaneous</a>
+    </div>
+  </nav>
+
+  <div class="two-panel">
+    <main id="app-root" class="app-root">
+      <!-- page content injected here -->
+    </main>
+    <div class="panel-divider" aria-hidden="true"></div>
+    <aside id="detail-panel" class="detail-panel" aria-label="Detail view">
+      <div class="detail-empty">
+        <span class="detail-empty-text">select a piece to read</span>
+      </div>
+    </aside>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span>&copy; <span id="year-now">2026</span> Asa Muhammad — portfolio, of sorts</span>
+
+        <button type="button" id="skater-toggle" class="btn skater-btn">skater mode</button>
+      </div>
+
+      <div class="instrument-panel" id="instrument-panel">
+        <div class="ip-row ip-time" id="ip-time">00:00:00</div>
+        <div class="ip-row ip-cal">
+          <span class="ip-label">GREG</span><span id="ip-greg">—</span>
+        </div>
+        <div class="ip-row ip-cal">
+          <span class="ip-label">HEB</span><span id="ip-heb">—</span>
+        </div>
+        <div class="ip-row ip-cal">
+          <span class="ip-label">ISL</span><span id="ip-isl">—</span>
+        </div>
+        <div class="ip-row ip-cal">
+          <span class="ip-label">SINO</span><span id="ip-chin">—</span>
+      </div>
+    </div>
+  </footer>
+
+</div>
+
+<script src="photo_data.js"></script>
+<script src="content.js"></script>
+<script src="clock.js"></script>
+<script src="dissolve.js"></script>
+<script src="router.js"></script>
+<script src="detail.js"></script>
+<script src="skater.js"></script>
+</body>
+</html>

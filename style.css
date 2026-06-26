@@ -1,0 +1,661 @@
+/* ============================================================
+   TOKENS
+   ============================================================ */
+:root {
+  --paper: #EDEAE0; /*EDEAE0*/
+  --screen: #F7F5EE;
+  --ink: #1C1C1C; /*1C1C1C*/
+  --wire: #5A5F52;
+  --dim: #C9C2AC;
+  --signal: #9A2B1E;
+
+  --mono: "IBM Plex Mono", "Courier New", monospace;
+  --serif: Georgia, "Times New Roman", Times, serif;
+
+  --border: 1px solid var(--ink);
+  --border-dim: 1px solid var(--dim);
+}
+
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: local("IBM Plex Mono");
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+img { max-width: 100%; display: block; }
+
+/* CRT vignette, very light touch */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.06) 100%);
+}
+
+/* svg filter defs render nothing visually */
+.filter-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ============================================================
+   PAGE WRAP — this is what gets warped in skater mode
+   ============================================================ */
+#page-wrap {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* skater mode: flatten to single scroll layer so the SVG filter
+   composites all content (including previously-scrolled panels) */
+#page-wrap.skater-scroll {
+  height: auto;
+  min-height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.skater-scroll-child {
+  overflow: visible !important;
+  height: auto !important;
+}
+
+#page-wrap.skater-on {
+  filter: url(#skater-fisheye);
+}
+
+/* ============================================================
+   HEADER  (logo only — nav lives below in its own bar)
+   ============================================================ */
+.site-header {
+  position: relative;
+  z-index: 500;
+  background: var(--paper);
+}
+
+.header-inner {
+  max-width: 1400px;
+  margin: 0;
+  padding: 10px 12px 8px;
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.logo-mark {
+  font-family: var(--serif);
+  font-weight: 700;
+  font-size: 26px;
+  letter-spacing: 0.5px;
+}
+
+.logo-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.5px;
+  color: var(--wire);
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+
+/* ============================================================
+   NAV BAR — its own row, solid rule above and below
+   ============================================================ */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 499;
+  background: var(--paper);
+  border-top: var(--border);
+  border-bottom: var(--border);
+}
+
+.site-nav-inner {
+  max-width: 1400px;
+  margin: 0;
+  padding: 10px 10px;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.site-nav a {
+  padding: 2px 4px;
+  text-transform: lowercase;
+}
+
+.site-nav a:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.site-nav a.active {
+  background: var(--ink);
+  color: var(--screen);
+}
+
+.site-nav .sep {
+  color: var(--dim);
+  padding: 0 2px;
+}
+
+/* ============================================================
+   TWO-PANEL LAYOUT
+   ============================================================ */
+.two-panel {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.panel-divider {
+  width: 1px;
+  background: var(--ink);
+  flex-shrink: 0;
+  align-self: stretch;
+}
+
+/* ============================================================
+   MAIN / PAGE CONTENT (left panel)
+   ============================================================ */
+.app-root {
+  width: 420px;
+  flex-shrink: 0;
+  padding: 24px 10px 56px;
+  min-height: 50vh;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* ============================================================
+   DETAIL PANEL (right side)
+   ============================================================ */
+   .detail-panel {
+     flex: 1;
+     min-width: 0;
+     padding: 0px 5px; /* changed from 24px 20px 56px 24px */
+     overflow-y: auto;
+     height: 100%;
+   }
+
+   .detail-empty {
+     height: 100%;
+     min-height: 200px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     padding: 24px 20px; /* keep padding for empty state */
+   }
+
+.detail-empty-text {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.detail-content .detail-kicker {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--wire);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 6px;
+}
+
+.detail-content .detail-title {
+  font-family: var(--serif);
+  font-size: 26px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.detail-content .detail-meta {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--wire);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 16px;
+}
+
+.detail-content .detail-rule {
+  border: none;
+  border-top: 2px solid var(--ink);
+  margin: 0 0 24px;
+}
+
+.detail-content .detail-body {
+  font-size: 15px;
+  line-height: 1.7;
+  max-width: 750px;
+}
+
+.detail-content .detail-body p {
+  margin: 0 0 18px;
+}
+
+.detail-content .detail-body p:last-child {
+  margin-bottom: 0;
+}
+
+.page-kicker {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--wire);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 6px;
+}
+
+.page-title {
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  letter-spacing: -0.5px;
+}
+
+.page-rule {
+  border: none;
+  border-top: 2px solid var(--ink);
+  margin: 12px 0 24px;
+}
+
+.prose {
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.prose p { margin: 0 0 16px; }
+
+.prose strong { font-weight: 700; }
+
+/* plain text block used in place of the old shaded "cell-box" */
+.note-block {
+  margin: 0 0 18px;
+  padding-left: 12px;
+  border-left: 2px solid var(--ink);
+}
+
+.note-block-title {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 6px;
+  color: var(--signal);
+}
+
+/* listing rows used for writing/jobs — rules only, no fill */
+.listing {
+  border-top: var(--border);
+}
+
+.listing-row {
+  display: grid;
+  grid-template-columns: 84px 1fr auto;
+  gap: 14px;
+  align-items: baseline;
+  padding: 14px 0;
+  border-bottom: var(--border-dim);
+}
+
+.listing-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--wire);
+}
+
+.listing-main a {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.listing-main a:hover { text-decoration: underline; }
+
+.listing-desc {
+  font-size: 13px;
+  color: var(--wire);
+  margin-top: 3px;
+  font-family: var(--serif);
+}
+
+.listing-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  border: var(--border-dim);
+  padding: 2px 6px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  color: var(--wire);
+}
+
+/* jobs timeline */
+.job-entry {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: var(--border-dim);
+}
+
+.job-entry:first-of-type { border-top: var(--border); }
+
+.job-period {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--wire);
+  padding-top: 3px;
+}
+
+.job-role {
+  font-weight: 700;
+  font-size: 17px;
+  margin: 0 0 2px;
+}
+
+.job-org {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--signal);
+  margin: 0 0 8px;
+}
+
+.job-desc {
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* misc grid — rules only, no fill */
+.misc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0;
+  border-top: var(--border-dim);
+  border-left: var(--border-dim);
+}
+
+.misc-card {
+  padding: 14px;
+  border-right: var(--border-dim);
+  border-bottom: var(--border-dim);
+}
+
+.misc-card-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--wire);
+  text-transform: uppercase;
+  margin: 0 0 6px;
+  letter-spacing: 0.5px;
+}
+
+.misc-card p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.misc-card-btn {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.misc-card-btn:hover {
+  background: var(--screen);
+}
+
+.misc-card-btn:hover .misc-card-label {
+  color: var(--signal);
+}
+
+.misc-card-active {
+  background: var(--ink) !important;
+  color: var(--screen);
+}
+
+.misc-card-active .misc-card-label {
+  color: var(--dim) !important;
+}
+
+.misc-card-active p {
+  color: var(--screen);
+}
+
+.listing-row-active {
+  background: var(--screen);
+}
+
+.listing-row-active .listing-main a {
+  text-decoration: underline;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+.btn {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border: var(--border);
+  background: var(--paper);
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn:active {
+  transform: translate(1px, 1px);
+}
+
+.btn.is-active {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: var(--screen);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--wire);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  flex-shrink: 0;
+  border-top: var(--border-dim);
+}
+
+.footer-inner {
+  max-width: 1100px;
+  margin: 0;
+  padding: 10px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.skater-btn {
+  font-size: 10px;
+  padding: 4px 9px;
+}
+
+/* ============================================================
+   INSTRUMENT PANEL (clock + triple calendar)
+   Fixed to the viewport corner so it stays visible at all
+   scroll positions, not just when the footer is in view.
+   Lives in the footer markup but is visually detached from it.
+   ============================================================ */
+.instrument-panel {
+  position: fixed;
+  right: 14px;
+  bottom: 14px;
+  z-index: 600;
+  font-family: var(--mono);
+  background: var(--paper);
+  border: var(--border);
+  box-shadow: inset 1px 1px 0 rgba(0,0,0,0.15), inset -1px -1px 0 rgba(255,255,255,0.6), 2px 2px 6px rgba(0,0,0,0.15);
+  padding: 4px 7px 5px;
+  min-width: 140px;
+  flex-shrink: 0;
+}
+
+.ip-time {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--signal);
+  text-align: right;
+  border-bottom: var(--border-dim);
+  padding-bottom: 3px;
+  margin-bottom: 3px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ip-cal {
+  font-size: 9px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.ip-label {
+  color: var(--wire);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* ============================================================
+   DISSOLVE CANVAS
+   ============================================================ */
+#dissolve-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  display: none;
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 860px) {
+  .two-panel {
+    flex-direction: column;
+  }
+  .panel-divider {
+    width: auto;
+    height: 1px;
+    align-self: auto;
+  }
+  .app-root {
+    width: 100%;
+  }
+  .detail-panel {
+    padding: 20px 10px 40px;
+  }
+}
+
+@media (max-width: 680px) {
+  .site-nav-inner {
+    justify-content: flex-start;
+  }
+  .page-title { font-size: 26px; }
+  .listing-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .job-entry {
+    grid-template-columns: 1fr;
+  }
+  .misc-grid {
+    grid-template-columns: 1fr;
+  }
+  .footer-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    /* leave room so footer text doesn't run under the fixed panel */
+    padding-right: 112px;
+  }
+  .footer-left {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+  .instrument-panel {
+    right: 8px;
+    bottom: 8px;
+    min-width: 96px;
+    padding: 3px 5px 4px;
+  }
+  .ip-time {
+    font-size: 11px;
+  }
+  .ip-cal {
+    font-size: 8px;
+    gap: 4px;
+  }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .blink { animation: none; }
+}
