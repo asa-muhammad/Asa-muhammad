@@ -16,22 +16,21 @@
 
 <!-- skater mode lens filter definition (no visual output on its own) -->
 <svg class="filter-defs" aria-hidden="true">
-  <defs>
-    <!-- Radial displacement map as inline SVG data URI — no external file,
-         no CORS. The gradient goes from grey (128,128 = no displacement)
-         at the edges to colored (R high, G high) at center, producing
-         an outward barrel/fisheye push. -->
-    <filter id="skater-fisheye" x="-10%" y="-10%" width="120%" height="120%"
-            filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox"
-            color-interpolation-filters="sRGB">
-      <feImage
-        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cdefs%3E%3CradialGradient id='rx' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0' stop-color='%23ff8080'/%3E%3Cstop offset='1' stop-color='%23808080'/%3E%3C/radialGradient%3E%3CradialGradient id='ry' cx='50%25' cy='50%25' r='50%25'%3E%3Cstop offset='0' stop-color='%2380ff80'/%3E%3Cstop offset='1' stop-color='%23808080'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='256' height='256' fill='url(%23rx)'/%3E%3Crect width='256' height='256' fill='url(%23ry)' style='mix-blend-mode:multiply'/%3E%3C/svg%3E"
-        x="0" y="0" width="1" height="1"
-        result="map" preserveAspectRatio="none"/>
-      <feDisplacementMap in="SourceGraphic" in2="map" scale="0.15"
-                         xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-  </defs>
+  <filter id="skater-fisheye" x="-10%" y="-10%" width="120%" height="120%"
+          filterUnits="objectBoundingBox" primitiveUnits="objectBoundingBox"
+          color-interpolation-filters="sRGB">
+    <!-- Generate a radial gradient in-filter using feDiffuseLighting.
+         A point light directly above the centre of a sphere produces
+         a highlight whose R and G channels encode the X/Y normals of
+         that sphere — exactly the displacement map we need, with no
+         external file and no data URI. -->
+    <feDiffuseLighting lighting-color="white" surfaceScale="2"
+                       diffuseConstant="1" result="map">
+      <fePointLight x="0.5" y="0.5" z="0.35"/>
+    </feDiffuseLighting>
+    <feDisplacementMap in="SourceGraphic" in2="map" scale="0.18"
+                       xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
 </svg>
 
 <div id="page-wrap">
