@@ -522,7 +522,7 @@ window.PAGES = {
         <div class="job-body">
           <p class="job-role">Editorial Assistant</p>
           <p class="job-org">Chicago Review</p>
-          <p class="job-desc"> Literary magazine catering towards academics. Avant-garde poetry, avant-garde fiction, and essays on avant-garde poetics. Widely and globally read, by very few people. I became extremely acquainted with Chicago Manual of Style. Brought an entire volume from solititations to print during my time with the magazine.</p>
+          <p class="job-desc"> Literary magazine catering towards academics. Avant-garde poetry, avant-garde fiction, and essays on avant-garde poetics. Widely and globally read, by very few people. I became extremely acquainted with Chicago Manual of Style. Brought an entire volume from solicitations to print during my time with the magazine.</p>
         </div>
       </div>
       <div class="job-entry">
